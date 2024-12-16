@@ -1,6 +1,6 @@
 ### **Validator Registration Workflow**
 
-This guide provides step-by-step instructions for generating validator keys, creating registration signatures, and submitting them to the Gnosis Chain using a DApp. It also includes an optional step for uploading registration files when the DApp is hosted on a separate machine.
+This guide provides step-by-step instructions for generating validator registration signatures using an existing validator mnemonic or keystore files and submitting them to the Gnosis Chain using a DApp. It also includes an optional step for uploading registration files when the DApp is hosted on a separate machine.
 
 ---
 
@@ -8,8 +8,7 @@ This guide provides step-by-step instructions for generating validator keys, cre
 
 The workflow consists of two main components:
 1. **Validator Script**:
-   - Generates validator signing keys (`validator_keys`).
-   - Creates the `signedRegistrations.json` file required for registration.
+   - Uses an existing validator mnemonic or keystore files to create the `signedRegistrations.json` file required for registration.
 2. **Validator Registration DApp**:
    - Uploads the `signedRegistrations.json` file.
    - Submits the registration to the `VALIDATOR_REGISTRY_ADDRESS` smart contract.
@@ -19,7 +18,7 @@ The workflow consists of two main components:
 ## **1. Validator Script**
 
 ### **Features**
-- Automatically generates keystore files in EIP-2335 format.
+- Uses an existing BIP-39 mnemonic or pre-generated keystore files to generate registration signatures.
 - Creates the `signedRegistrations.json` file with validator registration data.
 - Preconfigured with Gnosis Chain endpoints and contract addresses.
 
@@ -28,6 +27,9 @@ The workflow consists of two main components:
 ### **Requirements**
 
 - Docker installed on your system.
+- Access to:
+  - An existing BIP-39 mnemonic **or** keystore files for your validator keys.
+  - The password for the keystore files.
 
 #### **Preconfigured `.env` File**
 The `script/.env.example` file is provided with preconfigured values. Copy it to create your own `.env` file.
@@ -50,8 +52,12 @@ VALIDATOR_REGISTRY_ADDRESS=0xefCC23E71f6bA9B22C4D28F7588141d44496A6D6
 # Chain Configuration
 CHAIN_ID=100
 
-# Keystore Password (used for all generated keys)
+# Validator Keystore Password
 KEYSTORE_PASSWORD=your-keystore-password
+
+# Path to Keystore Files or Mnemonic
+KEYSTORE_DIR=/path/to/validator_keys/    # If using keystore files
+MNEMONIC="your twelve word mnemonic here" # If using a mnemonic
 ```
 
 ---
@@ -65,25 +71,24 @@ docker build -t validator-script -f docker/Dockerfile.script .
 ```
 
 #### **Step 2: Run the Script**
-Run the Docker container to generate validator keys and registration signatures:
-```bash
-docker run --rm -v $(pwd)/output:/app/output validator-script <NUM_VALIDATORS>
-```
 
-- Replace `<NUM_VALIDATORS>` with the number of validators to generate (e.g., `3`).
-- Generated files will appear in the `output/` directory.
+Run the Docker container to generate registration signatures:
+```bash
+# Using existing keystore files
+docker run --rm -v $(pwd)/output:/app/output -v $(pwd)/validator_keys:/app/validator_keys validator-script
+
+# Using a mnemonic
+docker run --rm -v $(pwd)/output:/app/output validator-script --use-mnemonic
+```
 
 ---
 
 ### **Outputs**
 
-1. **`validator_keys/`**:
-   - Contains generated keystore files for your validators.
-
-2. **`signedRegistrations.json`**:
+1. **`signedRegistrations.json`**:
    - Contains the `message` and `signature` required for registration.
 
-3. **`validatorInfo.json`**:
+2. **`validatorInfo.json`**:
    - Contains metadata for configuring your validator node.
 
 ---
@@ -223,7 +228,6 @@ nethermind --Shutter.Enabled=true --Shutter.ValidatorInfoFile=/path/to/output/va
 ```
 project-root/
 ├── output/
-│   ├── validator_keys/            # Keystore files
 │   ├── signedRegistrations.json   # Registration signatures
 │   ├── validatorInfo.json         # Validator configuration
 ├── dapp/
@@ -244,4 +248,3 @@ project-root/
 │   ├── Dockerfile.script          # Dockerfile for the script
 │   ├── Dockerfile.dapp            # Dockerfile for the DApp
 ├── README.md                      # This documentation
-```
