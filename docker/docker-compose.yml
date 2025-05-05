@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   script:
     build:
@@ -10,7 +8,10 @@ services:
 
   dapp:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.dapp
+      context: ../dapp
+      dockerfile: ../docker/Dockerfile.dapp
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
