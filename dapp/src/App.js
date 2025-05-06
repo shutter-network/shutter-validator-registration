@@ -9,6 +9,7 @@ function App() {
   const [walletAddress, setWalletAddress] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const connectWallet = async () => {
     try {
@@ -25,6 +26,7 @@ function App() {
         setWalletAddress(accounts[0]);
         setIsConnected(true);
         setStatus("Wallet connected successfully!");
+        setCurrentStep(2);
       } else {
         setStatus("Please install MetaMask!");
       }
@@ -43,6 +45,7 @@ function App() {
       const { message, signature } = JSON.parse(fileContent);
       setUploadedFile({ message, signature });
       setStatus("File uploaded successfully! Click 'Send Transaction' to proceed.");
+      setCurrentStep(3);
     } catch (error) {
       setStatus(`Error processing file: ${error.message}`);
     }
@@ -71,7 +74,6 @@ function App() {
         return;
       }
 
-      
       const encodedData = web3.eth.abi.encodeFunctionCall(
         {
           inputs: [
@@ -93,7 +95,8 @@ function App() {
       const receipt = await web3.eth.sendTransaction(tx);
       setTransactionHash(receipt.transactionHash);
       setStatus("Transaction successful!");
-      setUploadedFile(null); // Clear the uploaded file after successful transaction
+      setUploadedFile(null);
+      setCurrentStep(1);
     } catch (error) {
       console.error("Transaction error details:", {
         message: error.message,
@@ -104,43 +107,110 @@ function App() {
     }
   };
 
+  const steps = [
+    { number: 1, title: "Connect Wallet", completed: isConnected },
+    { number: 2, title: "Upload File", completed: !!uploadedFile },
+    { number: 3, title: "Submit Transaction", completed: !!transactionHash }
+  ];
+
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h1>Validator Registration DApp</h1>
-      <button 
-        onClick={connectWallet}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: isConnected ? "#4CAF50" : "#2196F3",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          marginBottom: "20px"
-        }}
-      >
-        {isConnected ? "Connected" : "Connect Wallet"}
-      </button>
-      <FileUpload onFileUpload={handleFileUpload} />
-      {uploadedFile && (
+      <p>Web interface for validator registration for shutterized gnosis chain.</p>
+      {/* Steps Indicator */}
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        marginBottom: "40px",
+        position: "relative"
+      }}>
+        {steps.map((step, index) => (
+          <div key={step.number} style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center",
+            position: "relative",
+            zIndex: 1
+          }}>
+            <div style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              backgroundColor: step.completed ? "#4CAF50" : currentStep === step.number ? "#2196F3" : "#e0e0e0",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "8px",
+              fontWeight: "bold"
+            }}>
+              {step.number}
+            </div>
+            <div style={{ 
+              fontSize: "14px",
+              color: step.completed ? "#4CAF50" : currentStep === step.number ? "#2196F3" : "#666"
+            }}>
+              {step.title}
+            </div>
+          </div>
+        ))}
+        {/* Progress Line */}
+        <div style={{
+          position: "absolute",
+          top: "20px",
+          left: "0",
+          right: "0",
+          height: "2px",
+          backgroundColor: "#e0e0e0",
+          zIndex: 0
+        }} />
+      </div>
+
+      <div style={{ marginBottom: "20px" }}>
         <button 
-          onClick={sendTransaction}
+          onClick={connectWallet}
           style={{
             padding: "10px 20px",
             fontSize: "16px",
-            backgroundColor: "#2196F3",
+            backgroundColor: isConnected ? "#4CAF50" : "#2196F3",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-            marginTop: "20px",
+            width: "100%",
             marginBottom: "20px"
           }}
         >
-          Send Transaction
+          {isConnected ? "Wallet Connected" : "Connect Wallet"}
         </button>
+      </div>
+
+      {isConnected && (
+        <div style={{ marginBottom: "20px" }}>
+          <FileUpload onFileUpload={handleFileUpload} />
+        </div>
       )}
+
+      {uploadedFile && (
+        <div style={{ marginBottom: "20px" }}>
+          <button 
+            onClick={sendTransaction}
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#2196F3",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              width: "100%"
+            }}
+          >
+            Send Transaction
+          </button>
+        </div>
+      )}
+
       <StatusDisplay status={status} transactionHash={transactionHash} walletAddress={walletAddress} />
     </div>
   );
