@@ -1,11 +1,12 @@
-FROM node:20
+FROM node:22
 
 WORKDIR /app
 
 # Install dependencies
 COPY script/validator_script.js .
-COPY script/.env.example ./output/.env
+COPY script/package.json .
+COPY script/package-lock.json .
 
-RUN npm install bls @chainsafe/bls-keystore web3 minimist
+RUN npm install
 
 ENTRYPOINT ["node", "validator_script.js"]
