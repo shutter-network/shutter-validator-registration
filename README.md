@@ -1,24 +1,28 @@
 ### **Validator Registration Workflow**
 
-This guide provides step-by-step instructions for generating validator registration signatures using an existing validator mnemonic or keystore files and submitting them to the Gnosis Chain using a DApp. It also includes an optional step for uploading registration files when the DApp is hosted on a separate machine.
+This guide provides step-by-step instructions for generating validator registration signatures 
+using a existing validator keystore files and submitting them to the Gnosis Chain using a DApp. It also includes an optional step for uploading registration files when the DApp is hosted on a separate machine.
 
 ---
 
 ## **Overview**
 
 The workflow consists of two main components:
-1. **Validator Script**:
-   - Uses an existing validator mnemonic or keystore files to create the `signedRegistrations.json` file required for registration.
+1. **Signature generator**:
+   - Uses an existing validator keystore files to create the `signedRegistrations.json` file required for registration.
 2. **Validator Registration DApp**:
-   - Uploads the `signedRegistrations.json` file.
+   - Either automatically uses the `signedRegistrations.json` file generated above, 
+   - Or allows the user to upload the `signedRegistrations.json` file manually
+     
+     (useful when the DApp is hosted on a separate machine, see below for details).
    - Submits the registration to the `VALIDATOR_REGISTRY_ADDRESS` smart contract.
 
 ---
 
-## **1. Validator Script**
+## **1. Signature generator**
 
 ### **Features**
-- Uses an existing BIP-39 mnemonic or pre-generated keystore files to generate registration signatures.
+- Uses existing validator keystore files to generate registration signatures.
 - Creates the `signedRegistrations.json` file with validator registration data.
 - Preconfigured with Gnosis Chain endpoints and contract addresses.
 
@@ -26,72 +30,70 @@ The workflow consists of two main components:
 
 ### **Requirements**
 
-- Docker installed on your system.
+- Docker and the docker compose plugin installed on your system.
 - Access to:
-  - An existing BIP-39 mnemonic **or** keystore files for your validator keys.
+  - Validator keystore files for your validator keys.
   - The password for the keystore files.
 
-#### **Preconfigured `.env` File**
-The `script/.env.example` file is provided with preconfigured values. Copy it to create your own `.env` file.
+#### **Configured `.env` File**
+The `.env.example` file is provided as a template. Copy it to create your own `.env` file.
 
 ```bash
-cp script/.env.example script/.env
+cp .env.example .env
 ```
 
-#### **Example `.env` (script/.env.example)**
+#### **Provide your configuration**
+Replace the placeholders (valued in angle brackets) in the `.env` file with your actual values:
+
+Example:
 ```plaintext
-# Gnosis Chain Execution Layer (EL) RPC Endpoint
-EL_ENDPOINT=https://rpc.gnosis.gateway.fm
-
-# Gnosis Chain Consensus Layer (CL) RPC Endpoint
-CL_ENDPOINT=https://rpc-gbc.gnosischain.com
-
-# Validator Registry Contract Address
-VALIDATOR_REGISTRY_ADDRESS=0xefCC23E71f6bA9B22C4D28F7588141d44496A6D6
-
-# Chain Configuration
-CHAIN_ID=100
+# Path to Keystore Files
+KEYSTORE_DIR=/some/path/to/validator_keys
 
 # Validator Keystore Password
-KEYSTORE_PASSWORD=your-keystore-password
+KEYSTORE_PASSWORD=very-secure-password
 
-# Path to Keystore Files or Mnemonic
-KEYSTORE_DIR=/path/to/validator_keys/    # If using keystore files
-MNEMONIC="your twelve word mnemonic here" # If using a mnemonic
+# Validator start and end index (inclusive) 
+# Registration signatures will be generated for these indices.
+VALIDATOR_START_INDEX=4242
+VALIDATOR_END_INDEX=4243
 ```
 
 ---
 
 ### **How to Run**
 
-#### **Step 1: Build the Docker Image**
+How you run the script depends on whether you want to run both parts (signature generator and DApp) on the same machine or on separate ones. 
+The easiest is to run both parts on the same machine where your validator is also running.
+
+#### **Step 1: Build the docker images**
 Build the validator script Docker image:
 ```bash
-docker build -t validator-script -f docker/Dockerfile.script .
+docker compose build
 ```
 
-#### **Step 2: Run the Script**
+#### **Step 2: Run the Signature Generator**
 
 Run the Docker container to generate registration signatures:
 ```bash
-# Using existing keystore files
-docker run --rm -v $(pwd)/output:/app/output -v $(pwd)/validator_keys:/app/validator_keys validator-script
-
-# Using a mnemonic
-docker run --rm -v $(pwd)/output:/app/output validator-script --use-mnemonic
+docker compose up signer
 ```
 
 ---
 
 ### **Outputs**
 
-1. **`signedRegistrations.json`**:
+1. **`registrations/signedRegistrations.json`**:
    - Contains the `message` and `signature` required for registration.
 
-2. **`validatorInfo.json`**:
-   - Contains metadata for configuring your validator node.
+2. **`registrations/validatorInfo.json`**:
+   - Contains metadata necessary for running your validator client with Shutter enabled.
 
 ---
+
+#### **Step 3: Run the registration DApp** 
+
+
 
 ### **Optional Step: Upload Registration Files**
 

@@ -3,9 +3,9 @@ FROM node:22
 WORKDIR /app
 
 # Install dependencies
-COPY script/validator_script.js .
-COPY script/package.json .
-COPY script/package-lock.json .
+COPY validator_script.js .
+COPY package.json .
+COPY package-lock.json .
 
 RUN npm install
 

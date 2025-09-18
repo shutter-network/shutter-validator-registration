@@ -5,10 +5,13 @@ FROM node:20
 WORKDIR /app
 
 # Copy all files into the container
-COPY . .
+COPY package.json .
 
 # Install dependencies
 RUN npm install
+
+# Copy the rest of the application code
+COPY . .
 
 # Build the production files
 RUN npm run build

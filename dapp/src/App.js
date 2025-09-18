@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import StatusDisplay from "./components/StatusDisplay";
+import UseSignedRegistrations from "./components/UseSignedRegistrations";
 import Web3 from "web3";
 
-function App() {
+function App({ signedRegistrations }) {
   const [status, setStatus] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -13,7 +14,7 @@ function App() {
       const { message, signature } = JSON.parse(fileContent);
 
       // Connect to wallet
-      const web3 = new Web3(Web3.givenProvider || process.env.REACT_APP_EL_ENDPOINT);
+      const web3 = new Web3(Web3.givenProvider || process.env.EL_ENDPOINT);
       const accounts = await web3.eth.requestAccounts();
       setWalletAddress(accounts[0]);
 
@@ -33,7 +34,7 @@ function App() {
       // Send the transaction
       const tx = {
         from: accounts[0],
-        to: process.env.REACT_APP_VALIDATOR_REGISTRY_ADDRESS,
+        to: process.env.VALIDATOR_REGISTRY_ADDRESS,
         data: encodedData,
       };
 
@@ -47,11 +48,12 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Validator Registration DApp</h1>
-      <FileUpload onFileUpload={handleFileUpload} />
-      <StatusDisplay status={status} transactionHash={transactionHash} walletAddress={walletAddress} />
-    </div>
+      <div style={{padding: "20px"}}>
+        <h1>Validator Registration DApp</h1>
+        <UseSignedRegistrations signedRegistrations={signedRegistrations} onFileUpload={handleFileUpload}/>
+        <FileUpload onFileUpload={handleFileUpload}/>
+        <StatusDisplay status={status} transactionHash={transactionHash} walletAddress={walletAddress}/>
+      </div>
   );
 }
 
