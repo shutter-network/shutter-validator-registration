@@ -1,0 +1,17 @@
+services:
+  signer:
+    build:
+      context: signer
+    volumes:
+      - ./registrations:/output
+      - ${KEYSTORE_DIR:-.}:/keystore
+    command: "${VALIDATOR_START_INDEX} ${VALIDATOR_END_INDEX}"
+    env_file: .env
+
+  dapp:
+    build:
+      context: dapp
+    volumes:
+      - ./registrations:/app/public/registrations:ro
+    ports:
+      - "3000:3000"
