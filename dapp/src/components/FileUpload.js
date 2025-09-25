@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function FileUpload({ onFileUpload }) {
+function FileUpload({ onFileUpload, uploadedFile }) {
   const [fileName, setFileName] = useState("");
 
   const handleFileChange = (event) => {
@@ -30,7 +30,7 @@ function FileUpload({ onFileUpload }) {
           boxSizing: "border-box"
         }}
       >
-        {fileName ? "Change File" : "Choose File"}
+        {(fileName || uploadedFile) ? "Change File" : "Choose File"}
         <input
           type="file"
           accept=".json"

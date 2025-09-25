@@ -86,7 +86,7 @@ function App({ signedRegistrations }) {
 
       const tx = {
         from: accounts[0],
-        to: process.env.VALIDATOR_REGISTRY_ADDRESS,
+        to: process.env.REACT_APP_VALIDATOR_REGISTRY_ADDRESS,
         data: encodedData,
       };
       
@@ -186,18 +186,18 @@ function App({ signedRegistrations }) {
       {isConnected && (
         <div style={{ marginBottom: "20px" }}>
           <UseSignedRegistrations signedRegistrations={signedRegistrations} onFileUpload={handleFileUpload} />
-          <FileUpload onFileUpload={handleFileUpload} />
+          <FileUpload onFileUpload={handleFileUpload} uploadedFile={uploadedFile} />
         </div>
       )}
 
       {uploadedFile && (
         <div style={{ marginBottom: "20px" }}>
-          <button 
+          <button
             onClick={sendTransaction}
             style={{
               padding: "10px 20px",
               fontSize: "16px",
-              backgroundColor: "#2196F3",
+              backgroundColor: "#FF7043",
               color: "white",
               border: "none",
               borderRadius: "4px",
