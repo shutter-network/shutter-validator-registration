@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import FileUpload from "./components/FileUpload";
+import UseSignedRegistrations from "./components/UseSignedRegistrations";
 import StatusDisplay from "./components/StatusDisplay";
 import Web3 from "web3";
 
-function App() {
+function App({ signedRegistrations }) {
   const [status, setStatus] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -66,13 +67,10 @@ function App() {
       const { message, signature } = uploadedFile;
       setStatus("Preparing transaction...");
       
-      const web3 = new Web3(Web3.givenProvider);
-      const chainId = await web3.eth.getChainId();
-      
-      if (chainId != 10200 && chainId != 100){
-        setStatus("Please switch to Gnosis Chain");
-        return;
-      }
+      // Connect to wallet
+      const web3 = new Web3(Web3.givenProvider || process.env.EL_ENDPOINT);
+      const accounts = await web3.eth.requestAccounts();
+      setWalletAddress(accounts[0]);
 
       const encodedData = web3.eth.abi.encodeFunctionCall(
         {
@@ -87,8 +85,8 @@ function App() {
       );
 
       const tx = {
-        from: walletAddress,
-        to: process.env.REACT_APP_VALIDATOR_REGISTRY_ADDRESS,
+        from: accounts[0],
+        to: process.env.VALIDATOR_REGISTRY_ADDRESS,
         data: encodedData,
       };
       
@@ -187,6 +185,7 @@ function App() {
 
       {isConnected && (
         <div style={{ marginBottom: "20px" }}>
+          <UseSignedRegistrations signedRegistrations={signedRegistrations} onFileUpload={handleFileUpload} />
           <FileUpload onFileUpload={handleFileUpload} />
         </div>
       )}
