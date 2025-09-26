@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function FileUpload({ onFileUpload }) {
+function FileUpload({ onFileUpload, uploadedFile }) {
   const [fileName, setFileName] = useState("");
 
   const handleFileChange = (event) => {
@@ -14,9 +14,39 @@ function FileUpload({ onFileUpload }) {
   };
 
   return (
-    <div>
-      <input type="file" accept=".json" onChange={handleFileChange} />
-      {fileName && <p>Uploaded file: {fileName}</p>}
+    <div style={{ width: "100%" }}>
+      <label
+        style={{
+          display: "block",
+          padding: "10px 20px",
+          fontSize: "16px",
+          backgroundColor: "#2196F3",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          textAlign: "center",
+          width: "100%",
+          boxSizing: "border-box"
+        }}
+      >
+        {(fileName || uploadedFile) ? "Change File" : "Choose File"}
+        <input
+          type="file"
+          accept=".json"
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
+      </label>
+      {fileName && (
+        <p style={{ 
+          marginTop: "10px", 
+          textAlign: "center",
+          color: "#666"
+        }}>
+          Selected file: {fileName}
+        </p>
+      )}
     </div>
   );
 }
