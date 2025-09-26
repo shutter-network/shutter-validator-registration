@@ -11,6 +11,8 @@ services:
   dapp:
     build:
       context: dapp
+    environment:
+      - REACT_APP_VALIDATOR_REGISTRY_ADDRESS=${VALIDATOR_REGISTRY_ADDRESS}
     volumes:
       - ./registrations:/app/public/registrations:ro
     ports:
