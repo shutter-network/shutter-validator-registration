@@ -10,12 +10,12 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "web3": "^1.8.2"
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "web3": "1.8.2"
   },
   "devDependencies": {
-    "react-scripts": "^5.0.0"
+    "react-scripts": "5.0.0"
   },
   "browserslist": {
     "production": [

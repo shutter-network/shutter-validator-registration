@@ -3,6 +3,9 @@
 This guide provides step-by-step instructions for generating validator registration signatures 
 using a existing validator keystore files and submitting them to the Gnosis Chain using a DApp. It also includes an optional step for uploading registration files when the DApp is hosted on a separate machine.
 
+> [!IMPORTANT]
+> Currently (as of 2025-09) only version 0 is fully usable on Gnosis Chain i.e. only one validator can be registered at a time.
+
 ---
 
 ## **Overview**
