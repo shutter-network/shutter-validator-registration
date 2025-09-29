@@ -125,50 +125,9 @@ If you are generating registration files on a remote server (e.g., via SSH) and 
 
 ---
 
-### **Requirements**
-
-#### **Preconfigured `.env` File**
-The `dapp/.env.example` file is provided with preconfigured values. Copy it to create your own `.env` file.
-
-```bash
-cp dapp/.env.example dapp/.env
-```
-
-#### **Example `.env` (dapp/.env.example)**
-```plaintext
-REACT_APP_EL_ENDPOINT=https://rpc.gnosis.gateway.fm
-REACT_APP_VALIDATOR_REGISTRY_ADDRESS=0xefCC23E71f6bA9B22C4D28F7588141d44496A6D6
-```
-
----
-
 ### **How to Run**
 
-#### **Option 1: Local Development**
-
-1. Navigate to the `dapp/` directory:
-   ```bash
-   cd dapp/
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-4. Open the DApp in your browser:
-   ```plaintext
-   http://localhost:3000
-   ```
-
----
-
-#### **Option 2: Run Using Docker**
+#### **Run Using Docker**
 
 1. Build the Docker image:
    ```bash
