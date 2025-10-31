@@ -63,13 +63,12 @@ VALIDATOR_START_INDEX=4242
 VALIDATOR_END_INDEX=4243
 ```
 
-> [!IMPORTANT]
-> There are two versions of the registration message format, version 0 and version 1. 
-> Version 1 allows multiple validators to be registered in a single transaction.
-> Currently (as of 2025-09) version 1 is not yet fully usable on Gnosis Chain. 
->
-> Therefore, version 0 must be used until further notice i.e. only one validator can be registered at a time.
-> That means `VALIDATOR_START_INDEX` must be equal to `VALIDATOR_END_INDEX`.
+[!IMPORTANT]
+There are two versions of the registration message format, version 0 and version 1.
+Version 1 allows multiple validators to be registered in a single transaction.
+
+Version 1 is now fully enabled on Gnosis Chain and should be used for all registrations.
+It allows batched validator registration and replaces version 0.
 
 ---
 
