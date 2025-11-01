@@ -139,3 +139,4 @@ dist
 
 # Docker build artifacts
 docker-compose.override.yml
+.idea
