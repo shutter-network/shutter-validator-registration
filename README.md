@@ -76,7 +76,14 @@ VALIDATOR_END_INDEX=4243
 ## **Usage**
 
 The workflow consists of two separate components that can either both be run on the same machine or each on different machines.
-The easier option is to run both components on the same machine that also contains the validators keystores. 
+The easier option is to run both components on the same machine that also contains the validators keystores.
+
+There are **two modes** of operation, **registration** (validator joining Shutter) and **deregistration** (validator discontinuing providing Shutter).
+The default is to preform a registration.
+
+The only difference between the two is an additional setting (`DEREGISTER_ENABLE`) in the `.env` file.
+If you want to perform a deregistration remove the comment (i.e. remove the `#` sign before the line).
+
 
 ### **Step 1: Build the docker images**
 ```bash
@@ -97,7 +104,8 @@ docker compose up signer
 If the signature generation is successful, the following files will be created in the `registrations/` directory:
 
 1. **`registrations/signedRegistrations.json`**:
-   - Contains the signed messages required for registration on-chain.
+   - Contains the signed messages required for registration / deregistrations on-chain.
+     Note that the file is always called `signedRegistrations.json` even if the generated message is a deregistration.
 
 2. **`registrations/validatorInfo.json`**:
    - Contains metadata necessary for running your validator client with Shutter enabled.

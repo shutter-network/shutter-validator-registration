@@ -5,7 +5,7 @@ services:
     volumes:
       - ./registrations:/output
       - ${KEYSTORE_DIR:-.}:/keystore
-    command: "${VALIDATOR_START_INDEX} ${VALIDATOR_END_INDEX}"
+    command: "${DEREGISTER_ENABLED:-} ${VALIDATOR_START_INDEX} ${VALIDATOR_END_INDEX}"
     env_file: .env
 
   dapp:

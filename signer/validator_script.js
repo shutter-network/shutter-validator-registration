@@ -57,7 +57,7 @@ function computeUpdateMessage(startIndex, count, nonce, chainId, validatorRegist
 }
 
 async function main() {
-  const argv = minimist(process.argv.slice(2));
+  const argv = minimist(process.argv.slice(2), {"boolean": ["deregister"]});
 
   if (argv._.length === 0) {
     console.error('Must pass start validator index.');
@@ -77,8 +77,12 @@ async function main() {
   }
 
   let register = true;
-  if ('--deregister' in argv) {
+  if ('deregister' in argv && argv['deregister']) {
     register = false;
+    if (nonce === 0 && !register) {
+      // Fallback for common case
+      nonce = 1;
+    }
   }
 
   const version = parseInt(process.env.VALIDATOR_REGISTRY_VERSION, 10);
@@ -121,7 +125,8 @@ async function main() {
   let sigs = [];
 
   for (let i = startIndex; i < endIndex; i++) {
-    console.log(`Generating v${version} signature for validator ${i}`);
+    let dereg = register ? "" : "de";
+    console.log(`Generating v${version} ${dereg}registration signature for validator ${i}`);
 
     const messageHash = web3.utils.hexToBytes(web3.utils.sha3(new Uint8Array(message)));
     const sig = validatorSecretKeys[i].sign(messageHash, dst);
