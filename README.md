@@ -1,3 +1,8 @@
+> [!WARNING]
+> **This repository is no longer maintained.**
+> The Shutter encrypted mempool on Gnosis Chain was retired on 25 November 2026. Registering validators for Shutter on Gnosis Chain no longer has any effect.
+> The code remains available for reference.
+
 # **Shutter Validator Registration Workflow**
 
 To enable Shutter on your Gnosis Chain validators follow this step-by-step guide. 
